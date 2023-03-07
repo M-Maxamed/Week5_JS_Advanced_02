@@ -36,6 +36,18 @@ console.log("This is example result: ", fred.task());
   * dimensions (These represent the character's size in the video game)
   * destroy() // A method that returns: `${this.name} was removed from the game.`
 */
+class GameObject {
+  constructor(attributes) {
+    this.createdAt = attributes.createdAt;
+    this.name = attributes.name;
+    this.dimensions = attributes.dimensions;
+  }
+
+  destroy() {
+    return `${this.name} was removed from the game.`;
+  }
+}
+
 
 /*
   === CharacterStats ===
@@ -43,7 +55,15 @@ console.log("This is example result: ", fred.task());
   * takeDamage() // A method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's method
 */
-
+class CharacterStats extends GameObject {
+  constructor(attributes) {
+    super(attributes);
+    this.healthPoints = attributes.healthPoints;
+  }
+  takeDamage() {
+    return `${this.name} took damage.`;
+  }
+}
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
   * team
@@ -53,6 +73,18 @@ console.log("This is example result: ", fred.task());
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
+class Humanoid extends CharacterStats {
+  constructor(attributes) {
+    super(attributes);
+    this.team = attributes.team;
+    this.weapons = attributes.weapons;
+    this.language = attributes.language;
+  }
+
+  greet() {
+    return `${this.name} offers a greeting in ${this.language}.`;
+  }
+}
  
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
@@ -60,9 +92,8 @@ console.log("This is example result: ", fred.task());
   * Instances of CharacterStats should have all of the same properties as GameObject.
 */
 
-// Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -113,6 +144,8 @@ console.log("This is example result: ", fred.task());
     language: 'Elvish',
   });
 
+  // Test you work by un-commenting these 3 objects and the list of console logs below:
+
   console.log(mage.createdAt); // Today's date
   console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
   console.log(swordsman.healthPoints); // 15
@@ -123,9 +156,51 @@ console.log("This is example result: ", fred.task());
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+
 
   // Stretch task: 
   // * Create Villain and Hero class that inherit from the Humanoid class.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+  class Humanoid1 {
+    constructor(name, health = 100) {
+      this.name = name;
+      this.health = health;
+    }
+  
+    attack(target) {
+      console.log(`${this.name} attacks ${target.name}!`);
+      target.takeDamage(10);
+    }
+  
+    takeDamage(damage) {
+      this.health -= damage;
+      console.log(`${this.name} takes ${damage} damage!`);
+      if (this.health <= 0) {
+        console.log(`${this.name} has been destroyed!`);
+      }
+    }
+  }
+  
+  class Villain extends Humanoid1 {
+    destroy(target) {
+      console.log(`${this.name} destroys ${target.name}!`);
+      target.takeDamage(target.health);
+    }
+  }
+  
+  class Hero extends Humanoid1 {
+    heal(target) {
+      console.log(`${this.name} heals ${target.name}!`);
+      target.health += 10;
+      console.log(`${target.name} is healed by 10 health points!`);
+    }
+  }
+  
+  const farah = new Villain("Farah", 50);
+  const xalimo = new Hero("Xalimo", 80);
+  
+  farah.destroy(xalimo);
+  xalimo.heal(xalimo);
+  farah.destroy(xalimo);  
